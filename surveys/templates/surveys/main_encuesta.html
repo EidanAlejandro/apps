@@ -1,0 +1,47 @@
+<h4>Gestión de Encuestas</h4>
+<hr/>
+<a href="{% url 'encuesta_crear' %}">Nueva Encuesta</a>
+<a href="{% url 'main_tipo_encuesta' %}">Tipos de Encuesta</a>
+<a href="{% url 'encuesta_list_bloqueadas' %}">Ver Bloqueadas</a> 
+<a href="{% url 'main_admin' %}">Volver al Menú Principal</a>
+<br/><br/>
+
+{% if messages %}
+    <ul>
+    {% for message in messages %}
+        <li>{{ message }}</li>
+    {% endfor %}
+    </ul>
+{% endif %}
+
+<table border="1">
+    <thead>
+        <th>Título</th>
+        <th>Descripción</th>
+        <th>Departamento</th>
+        <th>Tipo Encuesta</th>
+        <th>Acciones</th>
+    </thead>
+    <tbody>
+    {% for encuesta in encuesta_listado %}
+    <tr>
+        <td>{{ encuesta.titulo }}</td>
+        <td>{{ encuesta.descripcion }}</td>
+        <td>{{ encuesta.id_departamento.nombre_departamento }}</td>
+        <td>{{ encuesta.id_tipo_encuesta.nombre_tipo }}</td>
+        <td>
+            <a href="{% url 'encuesta_ver' encuesta.id_encuesta %}">Ver</a>
+            <a href="{% url 'main_pregunta' encuesta.id_encuesta %}">Preguntas</a>
+            {% if encuesta.state == 'Bloqueado' %} {# Esto no debería pasar si solo listamos Activas #}
+                <a href="{% url 'encuesta_editar' encuesta.id_encuesta %}">Editar</a> 
+                <a href="{% url 'encuesta_desbloquear' encuesta.id_encuesta %}">Desbloquear</a>
+            {% else %} {# Si está Activo #}
+                <a href="{% url 'encuesta_bloquear' encuesta.id_encuesta %}">Bloquear</a> {# <--- ENLACE BLOQUEAR AÑADIDO #}
+            {% endif %}
+            {# --- Fin Lógica --- #}
+            <a href="{% url 'encuesta_eliminar' encuesta.id_encuesta %}" onclick="return confirm('¿Eliminar encuesta \'{{ encuesta.titulo }}\' y todas sus preguntas?')">Eliminar</a>
+        </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>

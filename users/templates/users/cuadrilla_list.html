@@ -1,0 +1,44 @@
+<h4>Gestión de Cuadrillas</h4>
+<hr/>
+<a href="{% url 'cuadrilla_crear' %}">Nueva Cuadrilla</a> | 
+<a href="{% url 'cuadrilla_list_bloqueadas' %}">Ver Bloqueadas</a> | {# <--- NUEVO ENLACE #}
+<a href="{% url 'main_admin' %}">Volver al Menú Principal</a>
+<br/><br/>
+
+{% if messages %}
+    <ul>
+        {% for message in messages %}
+            <li>{{ message }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
+
+<table border="1">
+    <thead>
+        <tr>
+            <th>Nombre Cuadrilla</th>
+            <th>Departamento</th>
+            <th>Jefe Asignado</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for c in cuadrillas %}
+    <tr>
+        <td>{{ c.nombre_cuadrilla }}</td>
+        <td>{{ c.departamento.nombre_departamento }}</td>
+        <td>{{ c.jefe.get_full_name|default:"Sin asignar" }}</td> 
+        <td>
+            <a href="{% url 'cuadrilla_ver' c.id_cuadrilla %}">Ver</a> |
+            <a href="{% url 'cuadrilla_editar' c.id_cuadrilla %}">Editar</a> |
+            <a href="{% url 'cuadrilla_bloquear' c.id_cuadrilla %}">Bloquear</a> |
+            <a href="{% url 'cuadrilla_eliminar' c.id_cuadrilla %}" onclick="return confirm('¿Eliminar cuadrilla \'{{ c.nombre_cuadrilla }}\' permanentemente?')">Eliminar</a>
+        </td>
+    </tr>
+    {% empty %}
+    <tr>
+        <td colspan="4">No hay cuadrillas registradas.</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>

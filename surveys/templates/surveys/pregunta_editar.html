@@ -1,0 +1,7 @@
+<h4>Editar Pregunta</h4>
+<form method='post' action="{% url 'pregunta_editar' pregunta.id_pregunta %}">
+    {% csrf_token %}
+    <p>Texto de la Pregunta: <textarea name="texto_pregunta" required>{{ pregunta.texto_pregunta }}</textarea></p>
+    <p><input type="submit" value="Actualizar"></p>
+</form>
+<a href="{% url 'main_pregunta' pregunta.id_encuesta.id_encuesta %}">Volver a Preguntas</a>

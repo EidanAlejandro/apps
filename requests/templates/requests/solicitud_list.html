@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Listado de Solicitudes</title>
+</head>
+<body>
+    <h1>Listado de Solicitudes</h1>
+
+    {% if solicitudes %}
+        <table border="1">
+            <tr>
+                <th>ID Solicitud</th>
+                <th>Fecha</th>
+                <th>Estado</th>
+                <th>Encuesta</th>
+                <th>Cuadrilla</th>
+            </tr>
+            {% for s in solicitudes %}
+            <tr>
+                <td>{{ s.id_solicitud }}</td>
+                <td>{{ s.created|date:"d/m/Y H:i" }}</td>
+                <td>{{ s.id_estado.nombre_estado }}</td>
+                <td>{{ s.id_encuesta.titulo }}</td>
+                <td>{{ s.id_cuadrilla.id_usuario.nombre }} {{ s.id_cuadrilla.id_usuario.apellido }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <p>No hay solicitudes registradas.</p>
+    {% endif %}
+</body>
+</html>

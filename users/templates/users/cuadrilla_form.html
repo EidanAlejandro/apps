@@ -1,0 +1,8 @@
+<h4>{{ titulo }}</h4> {# Muestra 'Crear Nueva Cuadrilla' o 'Editar Cuadrilla' #}
+<hr>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }} {# Renderiza el CuadrillaForm con sus campos y desplegables filtrados #}
+    <button type="submit">Guardar</button>
+    <a href="{% url 'cuadrilla_list' %}">Cancelar</a>
+</form>

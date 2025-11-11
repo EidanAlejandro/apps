@@ -1,0 +1,92 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Crear Usuario - CIM{% endblock %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3">
+  <div>
+    <h2 class="h3 mb-0">Crear Usuario</h2>
+    <p class="text-muted small mb-0">Crea un usuario y asigna su rol y teléfono</p>
+  </div>
+  <div class="btn-toolbar mb-2 mb-md-0">
+    <a href="{% url 'user_list' %}" class="btn btn-outline-secondary">
+      <i class="bi bi-arrow-left"></i> Volver a la lista
+    </a>
+  </div>
+</div>
+
+<form method="post" novalidate>
+  {% csrf_token %}
+
+  {% if form.non_field_errors %}
+    <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+  {% endif %}
+
+  <div class="card shadow-sm">
+    <div class="card-body">
+      <div class="row g-3">
+
+        <div class="col-md-6">
+          <label class="form-label" for="{{ form.username.id_for_label }}">Usuario</label>
+          {{ form.username }}
+          <div class="text-danger small">{{ form.username.errors }}</div>
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label" for="{{ form.email.id_for_label }}">Correo</label>
+          {{ form.email }}
+          <div class="text-danger small">{{ form.email.errors }}</div>
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label" for="{{ form.first_name.id_for_label }}">Nombre</label>
+          {{ form.first_name }}
+          <div class="text-danger small">{{ form.first_name.errors }}</div>
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label" for "{{ form.last_name.id_for_label }}">Apellido</label>
+          {{ form.last_name }}
+          <div class="text-danger small">{{ form.last_name.errors }}</div>
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label" for="{{ form.password1.id_for_label }}">Contraseña</label>
+          {{ form.password1 }}
+          {% if form.password1.help_text %}
+            <div class="form-text">{{ form.password1.help_text|safe }}</div>
+          {% endif %}
+          <div class="text-danger small">{{ form.password1.errors }}</div>
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label" for="{{ form.password2.id_for_label }}">Confirmar contraseña</label>
+          {{ form.password2 }}
+          <div class="text-danger small">{{ form.password2.errors }}</div>
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label" for="{{ form.phone.id_for_label }}">Teléfono</label>
+          {{ form.phone }}
+          <div class="text-danger small">{{ form.phone.errors }}</div>
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label" for="{{ form.group.id_for_label }}">Rol / Perfil</label>
+          {{ form.group }}
+          <div class="text-danger small">{{ form.group.errors }}</div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="card-footer bg-transparent d-flex justify-content-end gap-2">
+      <a href="{% url 'user_list' %}" class="btn btn-outline-secondary">Cancelar</a>
+      <button type="submit" class="btn btn-primary">Crear Usuario</button>
+    </div>
+  </div>
+</form>
+
+{% endblock %}

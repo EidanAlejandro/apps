@@ -1,0 +1,8 @@
+<h4>{{ titulo }}</h4> {# Muestra 'Crear Solicitud' o 'Editar Solicitud' #}
+<hr/>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }} {# Renderiza el SolicitudForm #}
+    <button type="submit">Guardar Solicitud</button>
+    <a href="{% url 'main_requests' %}">Cancelar</a>
+</form>

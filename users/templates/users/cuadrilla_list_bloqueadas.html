@@ -1,0 +1,42 @@
+<h4>Cuadrillas Bloqueadas</h4>
+<hr/>
+<a href="{% url 'cuadrilla_list' %}">Volver a Cuadrillas Activas</a>
+<br/><br/>
+
+{% if messages %}
+    <ul>
+        {% for message in messages %}
+            <li>{{ message }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
+
+{% if cuadrillas_bloqueadas %}
+<table border="1">
+    <thead>
+        <tr>
+            <th>Nombre Cuadrilla</th>
+            <th>Departamento</th>
+            <th>Jefe Asignado</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for c in cuadrillas_bloqueadas %}
+    <tr>
+        <td>{{ c.nombre_cuadrilla }}</td>
+        <td>{{ c.departamento.nombre_departamento }}</td>
+        <td>{{ c.jefe.get_full_name|default:"Sin asignar" }}</td>
+        <td>
+            <a href="{% url 'cuadrilla_desbloquear' c.id_cuadrilla %}">Desbloquear</a>
+            {# Podrías añadir Eliminar aquí si quieres borrar bloqueadas #}
+            {# <a href="{% url 'cuadrilla_eliminar' c.id_cuadrilla %}" onclick="return confirm('¿Estás seguro de que quieres eliminar esta cuadrilla?');">Eliminar</a> #}
+        </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>No hay cuadrillas bloqueadas.</p>
+{% endif %}
+

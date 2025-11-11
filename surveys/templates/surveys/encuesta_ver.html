@@ -1,0 +1,30 @@
+<h4>Detalles de Encuesta: {{ encuesta_data.titulo }}</h4>
+<hr/>
+
+<p><strong>Título:</strong> {{ encuesta_data.titulo }}</p>
+<p><strong>Descripción:</strong> {{ encuesta_data.descripcion|default:"N/A" }}</p>
+<p><strong>Departamento:</strong> {{ encuesta_data.id_departamento.nombre_departamento }}</p>
+<p><strong>Tipo de Encuesta:</strong> {{ encuesta_data.id_tipo_encuesta.nombre_tipo }}</p>
+<p><strong>Estado:</strong> {{ encuesta_data.state }}</p>
+<p><strong>Fecha Creación:</strong> {{ encuesta_data.created|date:"d/m/Y H:i" }}</p>
+<p><strong>Última Actualización:</strong> {{ encuesta_data.updated|date:"d/m/Y H:i" }}</p>
+
+<hr>
+<h5>Preguntas Asociadas:</h5>
+{% if preguntas_asociadas %}
+    <ul>
+        {% for pregunta in preguntas_asociadas %}
+            <li>{{ pregunta.texto_pregunta }}</li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>Esta encuesta no tiene preguntas activas asociadas.</p>
+{% endif %}
+<a href="{% url 'main_pregunta' encuesta_data.id_encuesta %}">Gestionar Preguntas</a>
+
+<br><br>
+<a href="{% url 'main_encuesta' %}">Volver a la Lista de Encuestas</a>
+{# Mostrar editar solo si está bloqueada #}
+{% if encuesta_data.state == 'Bloqueado' %}
+ | <a href="{% url 'encuesta_editar' encuesta_data.id_encuesta %}">Editar Encuesta</a>
+{% endif %}

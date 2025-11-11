@@ -1,0 +1,164 @@
+{% load dict_filters %} {# Carga el filtro personalizado 'get_item' #}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Detalles de Solicitud #{{ solicitud.id_solicitud }}</title>
+    {# Aquí podrías poner links CSS si los tuvieras #}
+    <style>
+        /* Estilos básicos para mejorar legibilidad */
+        body { font-family: sans-serif; }
+        h4, h5 { margin-top: 1.5em; }
+        hr { margin: 1.5em 0; }
+        .pregunta-bloque { border: 1px solid #eee; padding: 15px; margin-bottom: 15px; background-color: #f9f9f9; }
+        .respuesta-bloque { border-bottom: 1px dashed #ccc; margin-bottom: 10px; padding-bottom: 10px; margin-left: 20px; }
+        .multimedia-bloque { margin-top: 10px; padding-left: 15px; border-left: 3px solid #ccc; font-size: 0.9em; }
+        .form-nueva-respuesta { margin-top: 15px; margin-left: 20px; }
+        button { margin-top: 5px; }
+        ul { padding-left: 20px; }
+        small { color: #555; }
+        .messages { list-style: none; padding: 10px; margin: 10px 0; border: 1px solid #ccc; background-color: #f8f8f8; }
+        .messages li { margin-bottom: 5px; }
+        .success { color: green; }
+        .error { color: red; }
+        .warning { color: orange; }
+        .info { color: blue; }
+    </style>
+</head>
+<body>
+
+    {# --- Menú Principal (Copiado de main_admin.html) --- #}
+    <h1>Gestión Municipal</h1>
+    <hr>
+    <a href="{% url 'main_admin' %}">Inicio</a> |
+    <a href="{% url 'main_direccion' %}">Direcciones</a> |
+    <a href="{% url 'main_departamento' %}">Departamentos</a> |
+    <a href="{% url 'user_list' %}">Usuarios</a> |
+    <a href="{% url 'cuadrilla_list' %}">Cuadrillas</a> |
+    <a href="{% url 'main_encuesta' %}">Encuestas</a> |
+    <a href="{% url 'main_requests' %}">Solicitudes</a>
+    <hr>
+    {# --- Fin Menú --- #}
+
+    {# --- Mostrar Mensajes --- #}
+    {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+    {# --- Fin Mensajes --- #}
+
+
+    {# --- Contenido Específico de esta página --- #}
+    <h4>Detalles de Solicitud #{{ solicitud.id_solicitud }} - {{ solicitud.titulo }}</h4>
+    <hr/>
+
+    {# --- Detalles de la Solicitud --- #}
+    <p><strong>Descripción:</strong> {{ solicitud.descripcion|default:"N/A" }}</p>
+    <p><strong>Ubicación:</strong> {{ solicitud.ubicacion|default:"N/A" }}</p>
+    <p><strong>Prioridad:</strong> {{ solicitud.get_prioridad_display }}</p>
+    <p><strong>Estado Actual:</strong> {{ solicitud.id_estado.nombre_estado }}</p>
+    <p><strong>Encuesta Asociada:</strong> {{ solicitud.id_encuesta.titulo }}</p>
+    <p><strong>Territorial:</strong> {{ solicitud.id_territorial.get_full_name|default:solicitud.id_territorial.username }}</p>
+    <p><strong>Cuadrilla Asignada:</strong>
+       {% if solicitud.id_cuadrilla %}
+          {{ solicitud.id_cuadrilla.nombre_cuadrilla }}
+          (Jefe: {{ solicitud.id_cuadrilla.jefe.get_full_name|default:"Sin jefe asignado a cuadrilla" }})
+       {% else %}
+          Sin asignar
+       {% endif %}
+    </p>
+    <p><strong>Fecha Creación:</strong> {{ solicitud.created|date:"d/m/Y H:i" }}</p>
+
+    <hr/>
+    <h4>Preguntas y Respuestas</h4>
+
+    {% if preguntas %}
+        {% for pregunta in preguntas %}
+            {# --- Bloque para cada Pregunta --- #}
+            <div class="pregunta-bloque">
+                <p><strong>Pregunta: {{ pregunta.texto_pregunta }}</strong></p>
+
+                {# --- Mostrar TODAS las respuestas existentes para esta pregunta --- #}
+                <h5>Respuestas Anteriores:</h5>
+                {% with respuestas_de_esta_pregunta=respuestas_list %} {# Usamos la lista completa pasada desde la vista #}
+                    {% for respuesta_obj in respuestas_de_esta_pregunta %}
+                        {% if respuesta_obj.id_pregunta_id == pregunta.id_pregunta %}
+                            <div class="respuesta-bloque">
+                                <p>{{ respuesta_obj.respuesta }}</p>
+                                <p><small><em>Respondido el: {{ respuesta_obj.created|date:"d/m/y H:i" }}</em></small></p>
+
+                                {# --- SECCIÓN MULTIMEDIA (Dentro de la respuesta) --- #}
+                                <div class="multimedia-bloque">
+                                    <h6>Multimedia de esta Respuesta:</h6>
+                                    {% with multimedia_respuesta=respuesta_obj.multimedia_set.all %}
+                                    {% if multimedia_respuesta %}
+                                        <ul>
+                                            {% for item in multimedia_respuesta %}
+                                            <li>
+                                                <a href="{{ item.archivo.url }}" target="_blank">{{ item.get_tipo_display }}</a>
+                                                {% if item.descripcion %}- {{ item.descripcion }}{% endif %}
+                                                <small>(Subido: {{ item.created|date:"d/m/Y H:i" }})</small>
+                                            </li>
+                                            {% endfor %}
+                                        </ul>
+                                    {% else %}
+                                        <p><small>No hay multimedia para esta respuesta.</small></p>
+                                    {% endif %}
+                                    {% endwith %}
+                                    {# Formulario para AÑADIR multimedia A ESTA RESPUESTA EXISTENTE #}
+                                    <form method="post" action="{% url 'multimedia_subir' respuesta_obj.id_respuesta %}" enctype="multipart/form-data" style="margin-top: 5px;">
+                                        {% csrf_token %}
+                                        {{ MultimediaForm.as_p }} {# Muestra el form MultimediaForm #}
+                                        <button type="submit" style="font-size: 0.8em;">Añadir Multimedia a Respuesta</button>
+                                    </form>
+                                </div>
+                                {# --- FIN SECCIÓN MULTIMEDIA --- #}
+                            </div>
+                        {% endif %}
+                    {% empty %}
+                        {# Este empty aplica a respuestas_list en general, no debería mostrarse aquí si hay preguntas #}
+                    {% endfor %}
+                {% endwith %}
+
+                {# --- SIEMPRE mostrar formulario para añadir NUEVA respuesta --- #}
+                <div class="form-nueva-respuesta">
+                    <h5>Añadir Nueva Respuesta:</h5>
+                    {% with form_para_pregunta=forms_respuestas|get_item:pregunta.id_pregunta %}
+                        {% if form_para_pregunta %}
+                            <form method="post" action="{% url 'respuesta_guardar' solicitud.id_solicitud pregunta.id_pregunta %}">
+                                {% csrf_token %}
+                                {{ form_para_pregunta.respuesta.errors }}
+                                <p>{{ form_para_pregunta.respuesta }}</p>
+                                <button type="submit">Guardar Nueva Respuesta</button>
+                            </form>
+                        {% else %}
+                            <p><em>(Error al cargar formulario de respuesta)</em></p>
+                        {% endif %}
+                    {% endwith %}
+                </div>
+                {# --- FIN FORMULARIO NUEVA RESPUESTA --- #}
+
+            </div> {# Fin Bloque Pregunta #}
+        {% endfor %}
+    {% else %}
+        <p>La encuesta asociada no tiene preguntas activas.</p>
+    {% endif %}
+
+    <br/>
+    {# --- Enlaces Finales --- #}
+    <a href="{% url 'main_requests' %}">Volver a la Lista de Solicitudes</a> |
+    <a href="{% url 'solicitud_editar' solicitud.id_solicitud %}">Editar esta Solicitud</a>
+    {# --- Fin Contenido Específico --- #}
+
+    <hr>
+    {# Botón de logout #}
+    <form action="{% url 'logout' %}" method="post">
+        {% csrf_token %}
+        <button type="submit">Cerrar Sesión</button>
+    </form>
+
+</body>
+</html>

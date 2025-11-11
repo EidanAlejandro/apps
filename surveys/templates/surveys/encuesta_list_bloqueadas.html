@@ -1,0 +1,34 @@
+<h4>Encuestas Bloqueadas</h4>
+<hr/>
+<a href="{% url 'main_encuesta' %}">Volver a Encuestas Activas</a>
+<br/><br/>
+
+{% if messages %}<ul>{% for message in messages %}<li>{{ message }}</li>{% endfor %}</ul>{% endif %}
+
+{% if encuestas_bloqueadas %}
+<table border="1">
+    <thead>
+        <th>Título</th>
+        <th>Departamento</th>
+        <th>Tipo</th>
+        <th>Acciones</th>
+    </thead>
+    <tbody>
+    {% for e in encuestas_bloqueadas %}
+    <tr>
+        <td>{{ e.titulo }}</td>
+        <td>{{ e.id_departamento.nombre_departamento }}</td>
+        <td>{{ e.id_tipo_encuesta.nombre_tipo }}</td>
+        <td>
+            <a href="{% url 'encuesta_ver' e.id_encuesta %}">Ver</a> |
+            <a href="{% url 'encuesta_editar' e.id_encuesta %}">Editar</a> | {# Ya están bloqueadas #}
+            <a href="{% url 'encuesta_desbloquear' e.id_encuesta %}">Desbloquear</a>
+            {# <a href="{% url 'encuesta_eliminar' e.id_encuesta %}" onclick="return confirm('¿Estás seguro de eliminar esta encuesta?');">Eliminar</a> #}
+        </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>No hay encuestas bloqueadas.</p>
+{% endif %}

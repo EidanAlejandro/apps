@@ -1,0 +1,26 @@
+<h4>Editar Encuesta</h4>
+<form method='post' action="{% url 'encuesta_editar' encuesta.id_encuesta %}">
+    {% csrf_token %}
+    <p>Título: <input type="text" name="titulo" value="{{ encuesta.titulo }}" required></p>
+    <p>Descripción: <textarea name="descripcion">{{ encuesta.descripcion }}</textarea></p>
+    <p>Departamento: 
+        <select name="id_departamento" required>
+            {% for departamento in departamentos %}
+            <option value="{{ departamento.id_departamento }}" {% if departamento.id_departamento == encuesta.id_departamento.id_departamento %}selected{% endif %}>
+                {{ departamento.nombre_departamento }}
+            </option>
+            {% endfor %}
+        </select>
+    </p>
+    <p>Tipo de Encuesta: 
+        <select name="id_tipo_encuesta" required>
+            {% for tipo in tipos_encuesta %}
+            <option value="{{ tipo.id_tipo_encuesta }}" {% if tipo.id_tipo_encuesta == encuesta.id_tipo_encuesta.id_tipo_encuesta %}selected{% endif %}>
+                {{ tipo.nombre_tipo }}
+            </option>
+            {% endfor %}
+        </select>
+    </p>
+    <p><input type="submit" value="Actualizar"></p>
+</form>
+<a href="{% url 'encuesta_list_bloqueadas' %}">Volver</a>

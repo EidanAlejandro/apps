@@ -1,0 +1,7 @@
+<h4>Crear Nueva Pregunta - {{ encuesta.titulo }}</h4>
+<form method='post' action="{% url 'pregunta_crear' encuesta.id_encuesta %}">
+    {% csrf_token %}
+    <p>Texto de la Pregunta: <textarea name="texto_pregunta" placeholder="Ingrese la pregunta" required></textarea></p>
+    <p><input type="submit" value="Crear"></p>
+</form>
+<a href="{% url 'main_pregunta' encuesta.id_encuesta %}">Volver a Preguntas</a>

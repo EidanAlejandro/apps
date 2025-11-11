@@ -1,0 +1,43 @@
+<h4>Gestión de Solicitudes</h4>
+<hr/>
+<a href="{% url 'solicitud_crear' %}">Nueva Solicitud</a>
+<a href="{% url 'solicitud_list_bloqueadas' %}">Ver Bloqueadas</a> 
+
+<a href="{% url 'main_admin' %}">Volver al Menú Principal</a>
+<br/><br/>
+
+{% if messages %}<ul>{% for message in messages %}<li>{{ message }}</li>{% endfor %}</ul>{% endif %}
+
+<table border="1">
+    <thead>
+        <th>ID</th>
+        <th>Título</th>
+        <th>Encuesta</th>
+        <th>Territorial</th>
+        <th>Estado</th>
+        <th>Prioridad</th>
+        <th>Creada</th>
+        <th>Acciones</th>
+    </thead>
+    <tbody>
+    {% for s in solicitud_listado %}
+    <tr>
+        <td>{{ s.id_solicitud }}</td>
+        <td>{{ s.titulo }}</td>
+        <td>{{ s.id_encuesta.titulo }}</td>
+        <td>{{ s.id_territorial.first_name }} {{ s.id_territorial.last_name }}</td>
+        <td>{{ s.id_estado.nombre_estado }}</td>
+        <td>{{ s.get_prioridad_display }}</td> {# Muestra el texto legible #}
+        <td>{{ s.created|date:"d/m/Y H:i" }}</td>
+        <td>
+            <a href="{% url 'solicitud_ver' s.id_solicitud %}">Ver Detalles</a>
+            <a href="{% url 'solicitud_editar' s.id_solicitud %}">Editar</a>
+            <a href="{% url 'solicitud_bloquear' s.id_solicitud %}">Bloquear</a>
+            <a href="{% url 'solicitud_eliminar' s.id_solicitud %}" onclick="return confirm('¿Eliminar solicitud?')">Eliminar</a>
+        </td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="8">No hay solicitudes registradas.</td></tr>
+    {% endfor %}
+    </tbody>
+</table>

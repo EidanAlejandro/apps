@@ -1,0 +1,41 @@
+<h4>Solicitudes Bloqueadas</h4>
+<hr/>
+<a href="{% url 'main_requests' %}">Volver a Solicitudes Activas</a>
+<br/><br/>
+
+{% if messages %}<ul>{% for message in messages %}<li>{{ message }}</li>{% endfor %}</ul>{% endif %}
+
+{% if solicitudes_bloqueadas %}
+<table border="1">
+    <thead>
+        <th>ID</th>
+        <th>Título</th>
+        <th>Encuesta</th>
+        <th>Territorial</th>
+        <th>Estado</th> 
+        <th>Creada</th>
+        <th>Acciones</th>
+    </thead>
+    <tbody>
+    {% for s in solicitudes_bloqueadas %}
+    <tr>
+        <td>{{ s.id_solicitud }}</td>
+        <td>{{ s.titulo }}</td>
+        <td>{{ s.id_encuesta.titulo }}</td>
+        <td>{{ s.id_territorial.get_full_name }}</td>
+        <td>{{ s.id_estado.nombre_estado }}</td>
+        <td>{{ s.created|date:"d/m/Y H:i" }}</td>
+        <td>
+            <a href="{% url 'solicitud_ver' s.id_solicitud %}">Ver</a> | 
+            <a href="{% url 'solicitud_desbloquear' s.id_solicitud %}">Desbloquear</a>
+            {# Podrías añadir Eliminar aquí si quieres borrar bloqueadas #}
+            {# | <a href="{% url 'solicitud_eliminar' s.id_solicitud %}" onclick="return confirm('¿Estás seguro de que deseas eliminar esta solicitud?');">Eliminar</a> #}
+        </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>No hay solicitudes bloqueadas.</p>
+{% endif %}
+

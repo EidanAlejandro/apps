@@ -1,0 +1,7 @@
+<h4>Editar Tipo de Encuesta</h4>
+<form method='post' action="{% url 'tipo_encuesta_editar' tipo_encuesta.id_tipo_encuesta %}">
+    {% csrf_token %}
+    <p>Nombre del Tipo: <input type="text" name="nombre_tipo" value="{{ tipo_encuesta.nombre_tipo }}" required></p>
+    <p><input type="submit" value="Actualizar"></p>
+</form>
+<a href="{% url 'main_tipo_encuesta' %}">Volver</a>

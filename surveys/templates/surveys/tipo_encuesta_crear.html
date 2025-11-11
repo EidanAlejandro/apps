@@ -1,0 +1,7 @@
+<h4>Crear Nuevo Tipo de Encuesta</h4>
+<form method='post' action="{% url 'tipo_encuesta_crear' %}">
+    {% csrf_token %}
+    <p>Nombre del Tipo: <input type="text" name="nombre_tipo" placeholder="Ingrese el nombre del tipo" required></p>
+    <p><input type="submit" value="Crear"></p>
+</form>
+<a href="{% url 'main_tipo_encuesta' %}">Volver</a>

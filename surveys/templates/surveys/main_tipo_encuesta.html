@@ -1,0 +1,31 @@
+<h4>Gestión de Tipos de Encuesta</h4>
+<hr/>
+<a href="{% url 'tipo_encuesta_crear' %}">Nuevo Tipo de Encuesta</a>
+<a href="{% url 'main_admin' %}">Volver al Menú Principal</a>
+<br/><br/>
+
+{% if messages %}
+    <ul>
+    {% for message in messages %}
+        <li>{{ message }}</li>
+    {% endfor %}
+    </ul>
+{% endif %}
+
+<table border="1">
+    <thead>
+        <th>Nombre Tipo</th>
+        <th>Acciones</th>
+    </thead>
+    <tbody>
+    {% for tipo in tipo_encuesta_listado %}
+    <tr>
+        <td>{{ tipo.nombre_tipo }}</td>
+        <td>
+            <a href="{% url 'tipo_encuesta_editar' tipo.id_tipo_encuesta %}">Editar</a>
+            <a href="{% url 'tipo_encuesta_eliminar' tipo.id_tipo_encuesta %}">Eliminar</a>
+        </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>

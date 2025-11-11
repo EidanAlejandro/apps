@@ -1,0 +1,31 @@
+<h4>Gestión de Preguntas - {{ encuesta.titulo }}</h4>
+<hr/>
+<a href="{% url 'pregunta_crear' encuesta.id_encuesta %}">Nueva Pregunta</a>
+<a href="{% url 'main_encuesta' %}">Volver a Encuestas</a>
+<br/><br/>
+
+{% if messages %}
+    <ul>
+    {% for message in messages %}
+        <li>{{ message }}</li>
+    {% endfor %}
+    </ul>
+{% endif %}
+
+<table border="1">
+    <thead>
+        <th>Texto de la Pregunta</th>
+        <th>Acciones</th>
+    </thead>
+    <tbody>
+    {% for pregunta in pregunta_listado %}
+    <tr>
+        <td>{{ pregunta.texto_pregunta }}</td>
+        <td>
+            <a href="{% url 'pregunta_editar' pregunta.id_pregunta %}">Editar</a>
+            <a href="{% url 'pregunta_eliminar' pregunta.id_pregunta %}">Eliminar</a>
+        </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>

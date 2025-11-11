@@ -1,0 +1,191 @@
+{% extends 'core/base.html' %} 
+{% load static %}
+
+{% block title %}Gestión de Usuarios - CIM{% endblock %} 
+
+{% block content %} 
+
+    {# 1. Cabecera (Título y Botones de Acción) - Sin cambios #}
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3">
+        <div>
+            <h2 class="h3 mb-0">Gestión de Usuarios</h2>
+            <p class="text-muted small mb-0">Administra los usuarios del sistema</p>
+        </div>
+        <div class="btn-toolbar mb-2 mb-md-0">
+             <a href="{% url 'user_crear' %}" class="btn btn-primary">
+                 <i class="bi bi-person-plus-fill"></i> Nuevo Usuario
+             </a>
+             <a href="{% url 'user_list_bloqueados' %}" class="btn btn-outline-secondary ms-2" title="Ver Bloqueados" data-bs-toggle="tooltip">
+                   <i class="bi bi-lock-fill"></i>
+                   <span class="ms-1">Usuarios Bloqueados</span> 
+             </a>
+        </div>
+    </div>
+
+    <!-- ================================================================== -->
+    <!--  FIX (Estilo): Tarjetas de Resumen actualizadas al estilo de       -->
+    <!--                'main_direccion.html' (summary-card).             -->
+    <!-- ================================================================== -->
+    <div class="row">
+        <!-- Tarjeta 1: Total Usuarios (Azul) -->
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card summary-card card-stat-blue">
+                <p class="mb-0 small">Total Usuarios</p>
+                <p class="h1 mb-0">{{ total_usuarios|default:0 }}</p>
+            </div>
+        </div>
+
+        <!-- Tarjeta 2: Activos (Verde) -->
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card summary-card card-stat-green">
+                <p class="mb-0 small">Activos</p>
+                <p class="h1 mb-0">{{ usuarios_activos|default:0 }}</p>
+            </div>
+        </div>
+
+        <!-- Tarjeta 3: Administradores (Azul) -->
+        <div class="col-lg-3 col-md-6 mb-3">
+            <!-- Asumimos que tienes una clase 'card-stat-yellow' o usamos 'blue' de nuevo -->
+            <div class="card summary-card card-stat-blue">
+                <p class="mb-0 small">Administradores</p>
+                <p class="h1 mb-0">{{ total_administradores|default:0 }}</p>
+            </div>
+        </div>
+
+        <!-- Tarjeta 4: Nuevos (Verde) -->
+        <div class="col-lg-3 col-md-6 mb-3">
+            <!-- Asumimos que tienes una clase 'card-stat-aqua' o usamos 'green' de nuevo -->
+            <div class="card summary-card card-stat-green">
+                <p class="mb-0 small">Nuevos (mes)</p>
+                <p class="h1 mb-0">{{ nuevos_usuarios_mes|default:0 }}</p>
+            </div>
+        </div>
+    </div>
+    <!-- ================================================================== -->
+
+
+    {# 3. Lista de Usuarios #}
+    <div class="list-card mt-4">
+        <div class="d-flex justify-content-between mb-3 align-items-center">
+            <h5 class="mb-0">Lista de Usuarios Activos</h5>
+            
+            <form method="GET" action="" class="d-flex" style="max-width: 350px;">
+                <div class="input-group">
+                    <input type="text" class="form-control" 
+                           name="q" 
+                           placeholder="Buscar por nombre o username" 
+                           value="{{ request.GET.q|default:'' }}">
+                    
+                    <button class="btn btn-outline-secondary" type="submit">
+                        <i class="bi bi-search"></i> Buscar
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-hover table-sm align-middle w-100">
+
+            <thead class="bg-primary text-white">
+                <tr>
+                    <th scope="col">Username</th>
+                    <th scope="col">Nombre Completo</th>
+                    <th scope="col">Correo</th>
+                    <th scope="col">Rol</th>
+                    <th scope="col">Teléfono</th>
+                    <th scope="col" class="text-center">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for u in users %}
+                <tr>
+                    <td>{{ u.username }}</td>
+                    <td>{{ u.get_full_name|default:"-" }}</td>
+                    <td>{{ u.email }}</td>
+                    <td>
+                        <!-- ================================================================== -->
+                        <!--  FIX (Color): Lógica de 6 roles actualizada.                 -->
+                        <!-- ================================================================== -->
+                        
+                        {% if u.profile.group.name == 'Admin' %}
+                            <!-- 1. Admin (Amarillo) -->
+                            <span class="badge rounded-pill bg-warning-subtle text-warning-emphasis">
+                                {{ u.profile.group.name }}
+                            </span>
+                            
+                        {% elif u.profile.group.name == 'Direccion' %}
+                            <!-- 2. Direccion (Azul) -->
+                            <span class="badge rounded-pill bg-primary-subtle text-primary-emphasis">
+                                {{ u.profile.group.name }}
+                            </span>
+                            
+                        {% elif u.profile.group.name == 'Departamento' %}
+                            <!-- 3. Departamento (Celeste) -->
+                            <span class="badge rounded-pill bg-info-subtle text-info-emphasis">
+                                {{ u.profile.group.name }}
+                            </span>
+                            
+                        {% elif u.profile.group.name == 'Territorial' %}
+                            <!-- 4. Territorial (Verde) -->
+                            <span class="badge rounded-pill bg-success-subtle text-success-emphasis">
+                                {{ u.profile.group.name }}
+                            </span>
+                            
+                        {% elif u.profile.group.name == 'Cuadrilla' %}
+                            <!-- 5. Cuadrilla (Oscuro) -->
+                            <span class="badge rounded-pill bg-danger-subtle text-danger-emphasis">
+                                {{ u.profile.group.name }}
+                            </span>
+                            
+                        {% elif u.profile.group.name == 'Ciudadano' %}
+                            <!-- 6. Ciudadano (Gris) -->
+                            <span class="badge rounded-pill bg-secondary-subtle text-secondary-emphasis">
+                                {{ u.profile.group.name }}
+                            </span>
+                            
+                        {% else %}
+                            <!-- Otro/Sin asignar (Gris) -->
+                            <span class="badge rounded-pill bg-secondary-subtle text-secondary-emphasis">
+                                {{ u.profile.group.name|default:"Sin asignar" }}
+                            </span>
+                        {% endif %}
+                        
+                        <!-- ================================================================== -->
+                    </td>
+                    <td>{{ u.profile.phone|default:"-" }}</td>
+
+                    <td class="text-center">
+                         <a href="{% url 'user_ver' u.id %}" class="btn btn-outline-info btn-sm border-0 btn-accion" title="Ver" data-bs-toggle="tooltip"><i class="bi bi-eye"></i></a>
+                         
+                         <a href="{% url 'user_edit' u.id %}" class="btn btn-outline-warning btn-sm border-0 btn-accion" title="Editar Rol/Datos" data-bs-toggle="tooltip"><i class="bi bi-pencil-square"></i></a>
+                         
+                         {% if u.is_active %}
+                         <a href="{% url 'user_bloquear' u.id %}" class="btn btn-outline-secondary btn-sm border-0 btn-accion" title="Bloquear" data-bs-toggle="tooltip"><i class="bi bi-slash-circle"></i></a>
+                         {% else %}
+                         <span class="btn btn-sm border-0 btn-accion invisible"><i class="bi bi-slash-circle"></i></span>
+                         {% endif %}
+
+                         {% if u != request.user %}
+                         <a href="{% url 'user_delete' u.id %}" class="btn btn-outline-danger btn-sm border-0 btn-accion" title="Eliminar" data-bs-toggle="tooltip" onclick="return confirm('¿Estás seguro de eliminar al usuario {{ u.username }}?')"><i class="bi bi-trash3"></i></a>
+                         {% else %}
+                         <span class="btn btn-sm border-0 btn-accion invisible"><i class="bi bi-trash3"></i></span>
+                         {% endif %}
+                    </td>
+                    </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="6" class="text-center text-muted py-3">
+                        {% if request.GET.q %}
+                            No se encontraron usuarios que coincidan con "{{ request.GET.q }}".
+                        {% else %}
+                            No hay usuarios activos registrados.
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+            </table>
+        </div>
+    </div>
+
+{% endblock %}

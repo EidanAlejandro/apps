@@ -1,0 +1,107 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Detalle de Usuario - CIM{% endblock %}
+
+{% block content %}
+
+    {# 1. Encabezado de la sección (Título y Botones de Acción) #}
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3">
+        <div>
+            <h2 class="h3 mb-0">Detalle de Usuario</h2>
+            <p class="text-muted small mb-0">Información completa de {{ user_data.username }}</p>
+        </div>
+        <div class="btn-toolbar mb-2 mb-md-0">
+            <a href="{% url 'user_edit' user_data.id %}" class="btn btn-outline-warning" title="Editar" data-bs-toggle="tooltip">
+                <i class="bi bi-pencil-square"></i> Editar Usuario/Rol
+            </a>
+            <a href="{% url 'user_list' %}" class="btn btn-primary ms-2">
+                <i class="bi bi-arrow-left"></i> Volver a la Lista
+            </a>
+        </div>
+    </div>
+
+    {# 2. Tarjeta de Detalles Generales (Estilo de direccion_ver) #}
+    <div class="card list-card">
+        <div class="card-body">
+            <h5 class="card-title mb-4">Información y Perfil</h5>
+            
+            <div class="row">
+                <div class="col-md-3 mb-3">
+                    <small class="text-muted d-block mb-1">Username</small>
+                    <p class="fw-bold fs-5">{{ user_data.username }}</p>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <small class="text-muted d-block mb-1">Nombre</small>
+                    <p class="fw-bold fs-5">{{ user_data.first_name|default:"-" }}</p>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <small class="text-muted d-block mb-1">Apellido</small>
+                    <p class="fw-bold fs-5">{{ user_data.last_name|default:"-" }}</p>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <small class="text-muted d-block mb-1">Correo</small>
+                    <p class="fw-bold fs-5">{{ user_data.email }}</p>
+                </div>
+            </div> 
+
+            <div class="row">
+                <div class="col-md-3 mb-3">
+                    <small class="text-muted d-block mb-1">Estado</small>
+                    <p class="fw-bold fs-5">
+                        {% if user_data.is_active %}
+                            <span class="badge rounded-pill bg-success-light">Activo</span>
+                        {% else %}
+                            <span class="badge rounded-pill bg-danger-light">Bloqueado</span>
+                        {% endif %}
+                    </p>
+                </div>
+
+                {% if profile_data %}
+                    <div class="col-md-3 mb-3">
+                        <small class="text-muted d-block mb-1">Rol (Grupo)</small>
+                        <p class="fw-bold fs-5">
+                            <span class="badge rounded-pill bg-secondary-subtle text-secondary-emphasis">
+                                {{ profile_data.group.name }}
+                            </span>
+                        </p>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <small class="text-muted d-block mb-1">Teléfono</small>
+                        <p class="fw-bold fs-5">{{ profile_data.phone|default:"N/A" }}</p>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <small class="text-muted d-block mb-1">Primera Sesión</small>
+                        <p class="fw-bold fs-5">{{ profile_data.first_session }}</p>
+                    </div>
+                {% else %}
+                    <div class="col-md-9 mb-3">
+                        <div class="alert alert-danger small p-2" role="alert">
+                            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                            <strong>Este usuario no tiene un perfil asociado.</strong>
+                        </div>
+                    </div>
+                {% endif %}
+            </div> 
+
+        </div>
+    </div>
+
+
+    {# 3. Tarjeta con Fechas Importantes (simulando la lista de deptos) #}
+    <div class="card list-card mt-4">
+        <div class="card-body">
+            <h5 class="card-title mb-3">Fechas Importantes</h5>
+            
+            <dl class="row">
+                <dt class="col-sm-3 col-md-2">Fecha Registro</dt>
+                <dd class="col-sm-9 col-md-10">{{ user_data.date_joined|date:"d/m/Y H:i" }}</dd>
+
+                <dt class="col-sm-3 col-md-2">Último Login</dt>
+                <dd class="col-sm-9 col-md-10">{{ user_data.last_login|date:"d/m/Y H:i"|default:"Nunca" }}</f>
+            </dl>
+            
+        </div>
+    </div>
+
+{% endblock %}
