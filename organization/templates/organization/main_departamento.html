@@ -1,0 +1,125 @@
+{% extends 'core/base.html' %} 
+{% load static %}
+
+{% block title %}Gestión de Departamentos - CIM{% endblock %} 
+
+{% block content %} 
+
+ <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3">
+        <div>
+            <h2 class="h3 mb-0">Gestión de Departamentos</h2>
+            <p class="text-muted small mb-0">Administra los departamentos municipales</p>
+        </div>
+        <div class="btn-toolbar mb-2 mb-md-0">
+             <!-- Botones apuntan a las URLs de departamento -->
+             <a href="{% url 'departamento_crear' %}" class="btn btn-primary">
+                 <i class="bi bi-plus-lg"></i> Nuevo Departamento
+             </a>
+
+             <a href="{% url 'departamento_list_bloqueados' %}" class="btn btn-outline-secondary ms-2" title="Ver Bloqueados" data-bs-toggle="tooltip">
+                  <i class="bi bi-lock-fill"></i>
+                  <span class="ms-1">Departamentos Bloqueados</span> 
+             </a>
+        </div>
+    </div>
+
+
+    {# Summary Cards (Tarjetas de Resumen) #}
+    <div class="row">
+        <div class="col-xl col-md-6 mb-3">
+            <div class="card summary-card card-stat-blue">
+                <p class="mb-0 small">Departamentos totales activos</p>
+                <p class="h1 mb-0">{{ departamento_listado.count|default:0 }}</p>
+            </div>
+        </div>
+        <div class="col-xl col-md-6 mb-3">
+             <div class="card summary-card card-stat-green">
+                <p class="mb-0 small">Cuadrillas totales activas</p>
+                <!-- Esta variable 'total_cuadrillas' la enviamos desde la vista -->
+                <p class="h1 mb-0">{{ total_cuadrillas|default:0 }}</p>
+            </div>
+        </div>
+        
+        <!-- Podrías agregar más tarjetas si lo necesitas, ej: Incidencias -->
+        <!--
+        <div class="col-xl col-md-6 mb-3">
+             <div class="card summary-card card-stat-orange">
+                <p class="mb-0 small">Incidencias asignadas</p>
+                <p class="h1 mb-0">{{ total_incidencias|default:0 }}</p>
+            </div>
+        </div>
+        -->
+    </div>
+
+    {# Lista de Departamentos #}
+    <div class="list-card mt-4">
+        <div class="d-flex justify-content-between mb-3 align-items-center">
+            <h5 class="mb-0">Lista de Departamentos Activos</h5>
+            
+            <!-- Formulario de búsqueda apunta a 'main_departamento' -->
+            <form method="GET" action="{% url 'main_departamento' %}" class="d-flex" style="max-width: 350px;">
+                <div class="input-group">
+                    <input type="text" class="form-control"" 
+                           name="q" 
+                           placeholder="Buscar por nombre, encargado o dirección" 
+                           value="{{ search_query|default:'' }}">
+                    
+                    <button class="btn btn-outline-secondary" type="submit">
+                        <i class="bi bi-search"></i> Buscar
+                    </button>
+                </div>
+            </form>
+
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-hover table-sm align-middle w-100">
+
+            <thead class="bg-primary text-white">
+                <tr>
+                    <th scope="col">Nombre</th>
+                    <th scope="col">Encargado</th>
+                    <th scope="col">Dirección a la que pertenece</th> <!-- Columna añadida -->
+                    <th scope="col" class="text-center">Cuadrillas</th> <!-- Columna cambiada -->
+                    <th scope="col" class="text-center">Estado</th> 
+                    <th scope="col" class="text-center">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+            <!-- Iteramos sobre 'departamento_listado' -->
+            {% for d in departamento_listado %}
+                <tr>
+                    <td>{{ d.nombre_departamento }}</td>
+                    <td>{{ d.usuario.first_name }} {{ d.usuario.last_name }}</td>
+                    <td>{{ d.id_direccion.nombre_direccion }}</td> <td class="text-center">{{ d.num_cuadrillas|default:0 }}</td><!-- Mostramos la dirección -->
+
+                    
+                    <td class="text-center">
+                        <span class="badge rounded-pill bg-success-light">Activo</span>
+                    </td>
+
+                    <td class="text-center">
+                         <!-- Acciones apuntan a las URLs de departamento -->
+                         <a href="{% url 'departamento_ver' d.id_departamento %}" class="btn btn-outline-info btn-sm border-0 btn-accion" title="Ver" data-bs-toggle="tooltip"><i class="bi bi-eye"></i></a>
+                         <a href="{% url 'departamento_editar' d.id_departamento %}" class="btn btn-outline-warning btn-sm border-0 btn-accion" title="Editar" data-bs-toggle="tooltip"><i class="bi bi-pencil-square"></i></a>
+                         <a href="{% url 'departamento_bloquea' d.id_departamento %}" class="btn btn-outline-secondary btn-sm border-0 btn-accion" title="Bloquear" data-bs-toggle="tooltip"><i class="bi bi-slash-circle"></i></a>
+                         <a href="{% url 'departamento_elimina' d.id_departamento %}" class="btn btn-outline-danger btn-sm border-0 btn-accion" title="Eliminar" data-bs-toggle="tooltip" onclick="return confirm('¿Eliminar departamento \'{{ d.nombre_departamento }}\' permanentemente?')"><i class="bi bi-trash3"></i></a>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="6" class="text-center text-muted py-3"> <!-- Colspan es 6 ahora -->
+                        {% if search_query %}
+                            No se encontraron departamentos que coincidan con "{{ search_query }}".
+                        {% else %}
+                            No hay departamentos activos registrados.
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+            </table>
+        </div>
+    </div>
+
+{% endblock %}

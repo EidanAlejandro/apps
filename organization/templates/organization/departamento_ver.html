@@ -1,0 +1,107 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Ver Departamento - {{ departamento_data.nombre_departamento }}{% endblock %}
+
+{% block content %}
+
+    {# 1. Encabezado de la sección (Título y Botones de Acción) #}
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3">
+        <div>
+            <h2 class="h3 mb-0">Ver Departamento</h2>
+            <p class="text-muted small mb-0">Detalles de {{ departamento_data.nombre_departamento }}</p>
+        </div>
+        <div class="btn-toolbar mb-2 mb-md-0">
+            <a href="{% url 'departamento_editar' departamento_data.id_departamento %}" class="btn btn-outline-warning" title="Editar" data-bs-toggle="tooltip">
+                <i class="bi bi-pencil-square"></i> Editar
+            </a>
+            <a href="{% url 'main_departamento' %}" class="btn btn-primary ms-2">
+                <i class="bi bi-arrow-left"></i> Volver al Listado
+            </a>
+        </div>
+    </div>
+
+    {# 2. Tarjeta de Detalles Generales (Estilo de direccion_ver) #}
+    <div class="card list-card">
+        <div class="card-body">
+            <h5 class="card-title mb-4">Detalles Generales</h5>
+            
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <small class="text-muted d-block mb-1">Nombre del Departamento</small>
+                    <p class="fw-bold fs-5">{{ departamento_data.nombre_departamento }}</p>
+                </div>
+
+                <div class="col-md-4 mb-3">
+                    <small class="text-muted d-block mb-1">Encargado</small>
+                    <p class="fw-bold fs-5">{{ departamento_data.usuario.get_full_name|default:"-" }}</p>
+                </div>
+
+                <div class="col-md-4 mb-3">
+                    <small class="text-muted d-block mb-1">Estado</small>
+                    <p class="fw-bold fs-5">
+                        {% if departamento_data.state == 'Activo' %}
+                            <span class="badge rounded-pill bg-success-light">Activo</span>
+                        {% else %}
+                            <span class="badge rounded-pill bg-danger-light">{{ departamento_data.state }}</span>
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-8 mb-3">
+                    <small class="text-muted d-block mb-1">Perteneciente a la Dirección</small>
+                    <p class="fw-bold fs-5">
+                        <a href="{% url 'direccion_ver' departamento_data.id_direccion.id_direccion %}" class="text-decoration-none">
+                            {{ departamento_data.id_direccion.nombre_direccion }}
+                        </a>
+                    </p>
+                </div>
+            </div> 
+        </div>
+    </div>
+
+
+    {# 3. Tarjeta con Jefes de Cuadrilla #}
+    <div class="card list-card mt-4">
+        <div class="card-body">
+            <h5 class="card-title mb-3">Jefes de Cuadrilla en este Departamento ({{ cuadrillas_listado.count|default:0 }})</h5>
+            
+            <div class="table-responsive">
+                <table class="table table-hover table-sm align-middle w-100">
+                    <thead class="bg-light">
+                        <tr>
+                            <th scope="col">Nombre Cuadrilla</th>
+                            <th scope="col">Jefe (Encargado)</th>
+                            <th scope="col" class="text-center">Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for cuadra in cuadrillas_listado %}
+                        <tr>
+                            <td class="py-3">{{ cuadra.nombre_cuadrilla }}</td>
+                            <td class="py-3">{{ cuadra.jefe.get_full_name|default:"No asignado" }}</td>
+                            <td class="text-center py-3">
+                                {% if cuadra.state == 'Activo' %}
+                                    <span class="badge rounded-pill bg-success-light ">Activo</span>
+                                {% else %}
+                                    <span class="badge rounded-pill bg-danger-light">{{ cuadra.state }}</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="3" class="text-center text-muted py-3">
+                                No hay cuadrillas asignadas a este departamento.
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+        </div>
+    </div>
+
+{% endblock %}

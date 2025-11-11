@@ -1,0 +1,77 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Departamentos Bloqueados - CIM{% endblock %}
+
+{% block content %}
+
+    {# Encabezado de la sección #}
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3">
+        <div>
+            <h2 class="h3 mb-0">Departamentos Bloqueados</h2>
+            <p class="text-muted small mb-0">Lista de departamentos inactivos en el sistema.</p>
+        </div>
+        <div class="btn-toolbar mb-2 mb-md-0">
+            <a href="{% url 'main_departamento' %}" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left"></i> Volver a Departamentos Activos
+            </a>
+        </div>
+    </div>
+
+    {# Lista de Departamentos Bloqueados #}
+    <div class="card list-card mt-4">
+        <div class="card-body">
+            
+            <div class="d-flex justify-content-between mb-3 align-items-center">
+                <h5 class="mb-0">Lista de Departamentos Bloqueados</h5>
+                </div>
+
+            <div class="table-responsive">
+                <table class="table table-hover table-sm align-middle w-100">
+                    
+                    <thead class="bg-light">
+                        <tr>
+                            <th scope="col">Nombre Departamento</th>
+                            <th scope="col">Dirección</th>
+                            <th scope="col">Encargado</th>
+                            <th scope="col" class="text-center">Estado</th>
+                            <th scope="col" class="text-center">Acciones</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for d in departamentos_bloqueados %}
+                        <tr>
+                            <td class="py-3">{{ d.nombre_departamento }}</td>
+                            <td class="py-3">{{ d.id_direccion.nombre_direccion }}</td>
+                            <td class="py-3">{{ d.usuario.first_name }} {{ d.usuario.last_name }}</td>
+                            
+                            <td class="text-center py-3">
+                                <span class="badge rounded-pill bg-danger-light">{{ d.state }}</span>
+                            </td>
+
+                            <td class="text-center py-3">
+                                <a href="{% url 'departamento_desbloquear' d.id_departamento %}" class="btn btn-outline-success btn-sm border-0 btn-accion" title="Desbloquear" data-bs-toggle="tooltip">
+                                    <i class="bi bi-unlock-fill"></i>
+                                </a>
+                                
+                                <a href="{% url 'departamento_elimina' d.id_departamento %}" class="btn btn-outline-danger btn-sm border-0 btn-accion" title="Eliminar Permanentemente" data-bs-toggle="tooltip" onclick="return confirm('¿Eliminar departamento \'{{ d.nombre_departamento }}\' permanentemente?')">
+                                    <i class="bi bi-trash3"></i>
+                                </a> 
+
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="text-center text-muted py-3">
+                                No hay departamentos bloqueados.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

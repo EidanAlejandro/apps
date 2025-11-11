@@ -1,0 +1,98 @@
+{% extends 'core/base.html' %} {# Hereda de la base general #}
+{% load static %}
+
+{% block title %}Dashboard - CIM{% endblock %} {# Título específico #}
+
+{% block content %} {# Inicio del contenido específico #}
+
+    <h2 class="h3 mb-1">Dashboard</h2>
+    <p class="text-muted mb-4">Panel de control del Centro de Incidencias Municipales.</p>
+
+    {# Summary Cards - Añade las variables correctas desde la vista #}
+    <div class="row">
+        <div class="col-xl col-md-6 mb-3">
+            <div class="card summary-card card-stat-blue">
+                <p class="mb-0 small">Usuarios registrados</p>
+                <p class="h1 mb-0">{{ total_usuarios|default:0 }}</p> {# Variable de la vista #}
+            </div>
+        </div>
+        <div class="col-xl col-md-6 mb-3">
+            <div class="card summary-card card-stat-yellow">
+                <p class="mb-0 small">Incidencias creadas</p>
+                <p class="h1 mb-0">{{ incidencias_creadas|default:0 }}</p> {# Variable de la vista #}
+            </div>
+        </div>
+        <div class="col-xl col-md-6 mb-3">
+            <div class="card summary-card card-stat-purple">
+                <p class="mb-0 small">Incidencias derivadas</p>
+                <p class="h1 mb-0">{{ incidencias_derivadas|default:0 }}</p> {# Variable de la vista #}
+            </div>
+        </div>
+         <div class="col-xl col-md-6 mb-3">
+            <div class="card summary-card card-stat-red">
+                <p class="mb-0 small">Incidencias rechazadas</p>
+                <p class="h1 mb-0">{{ incidencias_rechazadas|default:0 }}</p> {# Variable de la vista #}
+            </div>
+        </div>
+        <div class="col-xl col-md-6 mb-3">
+             <div class="card summary-card card-stat-green">
+                <p class="mb-0 small">Incidencias finalizadas</p>
+                <p class="h1 mb-0">{{ incidencias_finalizadas|default:0 }}</p> {# Variable de la vista #}
+            </div>
+        </div>
+    </div>
+
+    {# Incidencias Recientes #}
+    <div class="list-card mt-4">
+        <h5 class="mb-3">Incidencias Recientes</h5>
+        <div class="table-responsive">
+            <table class="table table-hover table-sm align-middle">
+                <thead>
+                   <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Título</th>
+                        <th scope="col">Dirección</th>
+                        <th scope="col">Departamento</th>
+                        <th scope="col">Estado</th>
+                        <th scope="col">Fecha</th>
+                        <th scope="col" class="text-center">Acciones</th>
+                   </tr>
+                </thead>
+                <tbody>
+                    {% for inc in incidencias_recientes %} {# Variable de la vista #}
+                    <tr>
+                        <td>{{ inc.id_solicitud }}</td>
+                        <td>{{ inc.titulo }}</td>
+                        <td>{{ inc.ubicacion|default:"N/A" }}</td> {# O el campo correcto #}
+                        <td>{{ inc.id_encuesta.id_departamento.nombre_departamento }}</td> {# Acceso al depto via encuesta #}
+                        <td>
+                           {# Lógica para mostrar badge según estado #}
+                           {% if inc.id_estado.nombre_estado == 'Abierta' or inc.id_estado.nombre_estado == 'Creada' %}
+                               <span class="badge rounded-pill bg-warning-light">{{ inc.id_estado.nombre_estado }}</span>
+                           {% elif inc.id_estado.nombre_estado == 'Derivada' %}
+                               <span class="badge rounded-pill bg-info-light">{{ inc.id_estado.nombre_estado }}</span>
+                           {% elif inc.id_estado.nombre_estado == 'Finalizada' or inc.id_estado.nombre_estado == 'Resuelta' or inc.id_estado.nombre_estado == 'Validada' %}
+                               <span class="badge rounded-pill bg-success-light">{{ inc.id_estado.nombre_estado }}</span>
+                            {% elif inc.id_estado.nombre_estado == 'En Proceso' %}
+                               <span class="badge rounded-pill bg-purple-light">{{ inc.id_estado.nombre_estado }}</span>
+                           {% elif inc.id_estado.nombre_estado == 'Rechazada' %}
+                               <span class="badge rounded-pill bg-danger-light">{{ inc.id_estado.nombre_estado }}</span>
+                           {% else %}
+                               <span class="badge rounded-pill bg-secondary">{{ inc.id_estado.nombre_estado }}</span>
+                           {% endif %}
+                        </td>
+                        <td>{{ inc.created|date:"Y-m-d" }}</td>
+                        <td class="text-center">
+                            <a href="{% url 'solicitud_ver' inc.id_solicitud %}" class="btn btn-sm btn-outline-primary border-0" title="Ver" data-bs-toggle="tooltip"><i class="bi bi-eye"></i></a>
+                            {# Podrías añadir editar/eliminar si el rol lo permite #}
+                        </td>
+                    </tr>
+                    {% empty %}
+                     <tr><td colspan="7" class="text-center text-muted py-3">No hay incidencias recientes.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+{% endblock %} 

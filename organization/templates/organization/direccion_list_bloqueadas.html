@@ -1,0 +1,72 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Direcciones Bloqueadas - CIM{% endblock %}
+
+{% block content %}
+
+    {# Encabezado de la sección #}
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3">
+        <div>
+            <h2 class="h3 mb-0">Direcciones Bloqueadas</h2>
+            <p class="text-muted small mb-0">Lista de direcciones actualmente inactivas.</p>
+        </div>
+        <div class="btn-toolbar mb-2 mb-md-0">
+
+            <a href="{% url 'main_direccion' %}" class="btn btn-primary">
+                <i class="bi bi-arrow-left"></i> Volver a Direcciones Activas
+            </a>
+        </div>
+    </div>
+
+    {# Lista de Direcciones Bloqueadas #}
+    <div class="list-card mt-4">
+        <div class="d-flex justify-content-between mb-3 align-items-center">
+            <h5 class="mb-0">Lista de Direcciones Bloqueadas</h5>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-hover table-sm align-middle w-100">
+
+
+                <thead class="bg-light">
+                    <tr>
+                        <th scope="col">Nombre</th>
+                        <th scope="col">Encargado</th>
+                        <th scope="col" class="text-center">Estado</th> 
+                        <th scope="col" class="text-center">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for d in direcciones_bloqueadas %}
+                    <tr>
+                        <td>{{ d.nombre_direccion }}</td>
+                        <td>{{ d.usuario.first_name }} {{ d.usuario.last_name }}</td>
+                        
+                        <td class="text-center">
+   
+                            <span class="badge rounded-pill bg-danger-light">{{ d.state }}</span>
+                        </td>
+
+                        <td class="text-center">
+
+                             <a href="{% url 'direccion_desbloquear' d.id_direccion %}" class="btn btn-outline-success btn-sm border-0 btn-accion" title="Desbloquear" data-bs-toggle="tooltip">
+                                <i class="bi bi-unlock"></i>
+                             </a>
+
+                             <a href="{% url 'direccion_elimina' d.id_direccion %}" class="btn btn-outline-danger btn-sm border-0 btn-accion" title="Eliminar Permanentemente" data-bs-toggle="tooltip" onclick="return confirm('¿Eliminar dirección \'{{ d.nombre_direccion }}\' permanentemente?')">
+                                <i class="bi bi-trash3"></i>
+                             </a>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                         <td colspan="4" class="text-center text-muted py-3">No hay direcciones bloqueadas.</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+{% endblock %}

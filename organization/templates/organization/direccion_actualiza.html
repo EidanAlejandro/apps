@@ -1,0 +1,16 @@
+<h4>Editar Dirección</h4>
+<form method='post' action="{% url 'direccion_actualiza' direccion_data.id_direccion %}">
+    {% csrf_token %}
+    <p>Nombre: <input type="text" name="nombre_direccion" value="{{ direccion_data.nombre_direccion }}"></p>
+    <p>Encargado: 
+        <select name="id_usuario">
+            {% for usuario in usuarios %}
+            <option value="{{ usuario.id_usuario }}" {% if usuario.id_usuario == direccion_data.id_usuario.id_usuario %}selected{% endif %}>
+                {{ usuario.nombre }} {{ usuario.apellido }}
+            </option>
+            {% endfor %}
+        </select>
+    </p>
+    <p><input type="submit" value="Actualizar"></p>
+</form>
+<a href="{% url 'main_direccion' %}">Volver</a>

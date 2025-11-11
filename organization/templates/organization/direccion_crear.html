@@ -1,0 +1,63 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Crear Nueva Dirección - CIM{% endblock %}
+
+{% block content %}
+
+
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3">
+        <div>
+            <h2 class="h3 mb-0">Crear Nueva Dirección</h2>
+            <p class="text-muted small mb-0">Completa los datos para registrar una nueva dirección</p>
+        </div>
+        <div class="btn-toolbar mb-2 mb-md-0">
+            <a href="{% url 'main_direccion' %}" class="btn btn-outline-secondary">
+                <i class="bi bi-x-lg"></i> Cancelar
+            </a>
+        </div>
+    </div>
+
+    {# Formulario de Creación #}
+    <div class="card list-card">
+        <div class="card-body">
+            <h5 class="card-title mb-4">Datos de la Nueva Dirección</h5>
+            
+            <form method="post" action="{% url 'direccion_guardar' %}">
+                {% csrf_token %}
+                
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="nombre_direccion" class="form-label">Nombre de la Dirección</label>
+                        <input type="text" id="nombre_direccion" name="nombre_direccion" class="form-control" placeholder="Ingrese el nombre" required>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label for="usuario" class="form-label">Encargado</label>
+                        <select id="usuario" name="usuario" class="form-select" required>
+                            <option value="">Seleccionar encargado...</option>
+                            
+                            <!-- Bucle para rellenar el select -->
+                            {% for u in usuarios %}
+                                <option value="{{ u.id }}">
+                                    {{ u.first_name }} {{ u.last_name }}
+                                </option>
+                            {% endfor %}
+                            
+                        </select>
+                    </div>
+                </div>
+
+                <hr class="my-4">
+
+                <div class="d-flex justify-content-end">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-lg"></i> Crear Dirección
+                    </button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+{% endblock %}

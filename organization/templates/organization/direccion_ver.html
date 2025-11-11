@@ -1,0 +1,95 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Ver Dirección - {{ direccion_data.nombre_direccion }}{% endblock %}
+
+{% block content %}
+
+    {# Encabezado de la sección (igual que en main_direccion) #}
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3">
+        <div>
+            <h2 class="h3 mb-0">Ver Dirección</h2>
+            <p class="text-muted small mb-0">Detalles de {{ direccion_data.nombre_direccion }}</p>
+        </div>
+        <div class="btn-toolbar mb-2 mb-md-0">
+            
+            <a href="{% url 'direccion_editar' direccion_data.id_direccion %}" class="btn btn-outline-warning" title="Editar" data-bs-toggle="tooltip">
+                <i class="bi bi-pencil-square"></i> Editar
+            </a>
+            <a href="{% url 'main_direccion' %}" class="btn btn-primary ms-2">
+                <i class="bi bi-arrow-left"></i> Volver al Listado
+            </a>
+        </div>
+    </div>
+
+
+
+    <div class="card list-card">
+        <div class="card-body">
+            <h5 class="card-title mb-4">Detalles Generales</h5>
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <small class="text-muted d-block mb-1">Nombre de la Dirección</small>
+                    <p class="fw-bold fs-5">{{ direccion_data.nombre_direccion }}</p>
+                </div>
+
+                <div class="col-md-4 mb-3">
+                    <small class="text-muted d-block mb-1">Encargado</small>
+                    <p class="fw-bold fs-5">{{ direccion_data.usuario.first_name }} {{ direccion_data.usuario.last_name }}</p>
+                </div>
+
+                <div class="col-md-4 mb-3">
+                    <small class="text-muted d-block mb-1">Estado</small>
+                    <p class="fw-bold fs-5">
+                        {% if direccion_data.state == 'Activo' %}
+                            <span class="badge rounded-pill bg-success-light">Activo</span>
+                        {% else %}
+                            <span class="badge rounded-pill bg-danger-light">{{ direccion_data.state }}</span>
+                        {% endif %}
+                    </p>
+                </div>
+            </div> 
+        </div>
+    </div>
+
+
+    {# Tarjeta con Departamentos de esta Dirección #}
+    <div class="card list-card mt-4">
+        <div class="card-body">
+            <h5 class="card-title mb-3">Departamentos en esta Dirección ({{ departamentos_listado.count }})</h5>
+            
+            <div class="table-responsive">
+                <table class="table table-hover table-sm align-middle w-100">
+                    <thead class="bg-light">
+                        <tr>
+                            <th scope="col">Nombre Departamento</th>
+                            <th scope="col">Encargado</th>
+                            <th scope="col" class="text-center">Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for depto in departamentos_listado %}
+                        <tr >
+                            <td class="py-3">{{ depto.nombre_departamento }}</td>
+                            <td class="py-3">{{ depto.usuario.first_name|default:'N/A' }} {{ depto.usuario.last_name|default:'' }}</td>
+                            <td class="text-center py-3">
+                                {% if depto.state == 'Activo' %}
+                                    <span class="badge rounded-pill bg-success-light ">Activo</span>
+                                {% else %}
+                                    <span class="badge rounded-pill bg-danger-light">{{ depto.state }}</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="3" class="text-center text-muted py-3">No hay departamentos asignados a esta dirección.</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+        </div>
+    </div>
+
+{% endblock %}

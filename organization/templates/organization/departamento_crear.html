@@ -1,0 +1,71 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Crear Nuevo Departamento - CIM{% endblock %}
+
+{% block content %}
+
+    {# 1. Encabezado (Estilo de direccion_crear.html) #}
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3">
+        <div>
+            <h2 class="h3 mb-0">Crear Nuevo Departamento</h2>
+            <p class="text-muted small mb-0">Completa los datos para registrar un nuevo departamento</p>
+        </div>
+        <div class="btn-toolbar mb-2 mb-md-0">
+            <a href="{% url 'main_departamento' %}" class="btn btn-outline-secondary">
+                <i class="bi bi-x-lg"></i> Cancelar
+            </a>
+        </div>
+    </div>
+
+    {# 2. Formulario (Estilo de direccion_crear.html) #}
+    <div class="card list-card mt-4">
+        <div class="card-body">
+            <h5 class="card-title mb-4">Datos del Nuevo Departamento</h5>
+            
+            <form method="post" novalidate> {% csrf_token %}
+                
+                {# Mensajes de error generales #}
+                {% if form.non_field_errors %}
+                    <div class="alert alert-danger p-2 small" role="alert">
+                        {{ form.non_field_errors }}
+                    </div>
+                {% endif %}
+                
+                <div class="row">
+                    <div class="col-md-12 mb-3">
+                        <label for="{{ form.nombre_departamento.id_for_label }}" class="form-label">{{ form.nombre_departamento.label }}</label>
+                        {{ form.nombre_departamento }} {% if form.nombre_departamento.errors %}
+                            <div class="invalid-feedback d-block">{{ form.nombre_departamento.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="{{ form.id_direccion.id_for_label }}" class="form-label">{{ form.id_direccion.label }}</label>
+                        {{ form.id_direccion }} {% if form.id_direccion.errors %}
+                            <div class="invalid-feedback d-block">{{ form.id_direccion.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label for="{{ form.usuario.id_for_label }}" class="form-label">{{ form.usuario.label }}</label>
+                        {{ form.usuario }} {% if form.usuario.errors %}
+                            <div class="invalid-feedback d-block">{{ form.usuario.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+                <hr class="my-4">
+
+                <div class="d-flex justify-content-end">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-lg"></i> Crear Departamento
+                    </button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+{% endblock %}

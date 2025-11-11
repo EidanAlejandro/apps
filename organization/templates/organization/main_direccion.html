@@ -1,0 +1,116 @@
+{% extends 'core/base.html' %} 
+{% load static %}
+
+{% block title %}Gestión de Direcciones - CIM{% endblock %} 
+
+{% block content %} 
+
+ <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3">
+        <div>
+            <h2 class="h3 mb-0">Gestión de Direcciones</h2>
+            <p class="text-muted small mb-0">Administra las direcciones municipales</p>
+        </div>
+        <div class="btn-toolbar mb-2 mb-md-0">
+             <a href="{% url 'direccion_crear' %}" class="btn btn-primary">
+                 <i class="bi bi-plus-lg"></i> Nueva Dirección
+             </a>
+
+             <a href="{% url 'direccion_list_bloqueadas' %}" class="btn btn-outline-secondary ms-2" title="Ver Bloqueadas" data-bs-toggle="tooltip">
+                  <i class="bi bi-lock-fill"></i>
+                  <span class="ms-1">Direcciones Bloqueadas</span> 
+             </a>
+ 
+             
+        </div>
+    </div>
+
+
+    {# Summary Cards (Datos de ejemplo) #}
+    <div class="row">
+        <div class="col-xl col-md-6 mb-3">
+            <div class="card summary-card card-stat-blue">
+                <p class="mb-0 small">Direcciones totales activas</p>
+                <p class="h1 mb-0">{{ direccion_listado.count|default:0 }}</p> {# Cuenta las direcciones listadas #}
+            </div>
+        </div>
+        <div class="col-xl col-md-6 mb-3">
+             <div class="card summary-card card-stat-green">
+                <p class="mb-0 small">Departamentos totales activos</p>
+                <p class="h1 mb-0">{{ total_departamentos|default:0 }}</p>
+            </div>
+        </div>
+    </div>
+
+    {# Lista de Direcciones #}
+    <div class="list-card mt-4">
+        <div class="d-flex justify-content-between mb-3 align-items-center">
+            <h5 class="mb-0">Lista de Direcciones Activas</h5>
+            
+
+            <form method="GET" action="{% url 'main_direccion' %}" class="d-flex" style="max-width: 350px;"> <!-- Ancho ajustado -->
+                <div class="input-group">
+                    
+
+                    <input type="text" class="form-control"" 
+                           name="q" 
+                           placeholder="Buscar por nombre o encargado" 
+                           value="{{ search_query|default:'' }}">
+                    
+                    <!-- Botón de Submit -->
+                    <button class="btn btn-outline-secondary" type="submit">
+                        <i class="bi bi-search"></i> Buscar
+                    </button>
+                </div>
+            </form>
+
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-hover table-sm align-middle w-100">
+
+            <thead class="bg-primary text-white">
+                <tr>
+                    <th scope="col">Nombre</th>
+                    <th scope="col">Encargado</th>
+                    <th scope="col" class="text-center">Departamentos</th>
+                    <th scope="col" class="text-center">Estado</th> 
+                    <th scope="col" class="text-center">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for d in direccion_listado %}
+                <tr>
+                    <td>{{ d.nombre_direccion }}</td>
+                    <td>{{ d.usuario.first_name }} {{ d.usuario.last_name }}</td>
+                    
+                    <td class="text-center">{{ d.num_departamentos }}</td>
+                    
+                    <td class="text-center">
+                        <span class="badge rounded-pill bg-success-light">Activo</span>
+                    </td>
+
+                    <td class="text-center">
+                         <a href="{% url 'direccion_ver' d.id_direccion %}" class="btn btn-outline-info btn-sm border-0 btn-accion" title="Ver" data-bs-toggle="tooltip"><i class="bi bi-eye"></i></a>
+                         <a href="{% url 'direccion_editar' d.id_direccion %}" class="btn btn-outline-warning btn-sm border-0 btn-accion" title="Editar" data-bs-toggle="tooltip"><i class="bi bi-pencil-square"></i></a>
+                         <a href="{% url 'direccion_bloquea' d.id_direccion %}" class="btn btn-outline-secondary btn-sm border-0 btn-accion" title="Bloquear" data-bs-toggle="tooltip"><i class="bi bi-slash-circle"></i></a>
+                         <a href="{% url 'direccion_elimina' d.id_direccion %}" class="btn btn-outline-danger btn-sm border-0 btn-accion" title="Eliminar" data-bs-toggle="tooltip" onclick="return confirm('¿Eliminar dirección \'{{ d.nombre_direccion }}\' permanentemente?')"><i class="bi bi-trash3"></i></a>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center text-muted py-3">
+                        {% if search_query %}
+                            No se encontraron direcciones que coincidan con "{{ search_query }}".
+                        {% else %}
+                            No hay direcciones activas registradas.
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+            </table>
+        </div>
+    </div>
+
+{% endblock %}
+
